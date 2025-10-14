@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>CFGS Desarrollo de Aplicaciones Web</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="cfgs-desarrollo-de-aplicaciones-web">CFGS Desarrollo de Aplicaciones Web</h1>
+<ul>
+<li><a href="#cfgs-desarrollo-de-aplicaciones-web">CFGS Desarrollo de Aplicaciones Web</a>
+<ul>
+<li><a href="#1-entorno-de-desarrollo">1. Entorno de Desarrollo</a>
+<ul>
+<li><a href="#11-ubuntu-server-24043-lts">1.1 Ubuntu Server 24.04.3 LTS</a>
+<ul>
+<li><a href="#111-configuraci%C3%B3n-inicial">1.1.1 <strong>Configuración inicial</strong></a>
+<ul>
+<li><a href="#nombre-y-configuraic%C3%B3n-de-red">Nombre y configuraicón de red</a></li>
+<li><a href="#actualizar-el-sistema"><strong>Actualizar el sistema</strong></a></li>
+<li><a href="#configuraci%C3%B3n-fecha-y-hora"><strong>Configuración fecha y hora</strong></a></li>
+<li><a href="#cuentas-administradoras"><strong>Cuentas administradoras</strong></a></li>
+<li><a href="#habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></a></li>
+</ul>
+</li>
+<li><a href="#112-instalaci%C3%B3n-del-servidor-web">1.1.2 Instalación del servidor web</a>
+<ul>
+<li><a href="#instalaci%C3%B3n">Instalación</a></li>
+<li><a href="#verficaci%C3%B3n-del-servicio">Verficación del servicio</a></li>
+<li><a href="#virtual-hosts">Virtual Hosts</a></li>
+<li><a href="#permisos-y-usuarios">Permisos y usuarios</a></li>
+</ul>
+</li>
+<li><a href="#113-php">1.1.3 PHP</a></li>
+<li><a href="#114-mysql">1.1.4 MySQL</a></li>
+<li><a href="#115-xdebug">1.1.5 XDebug</a></li>
+<li><a href="#116-dns">1.1.6 DNS</a></li>
+<li><a href="#117-sftp">1.1.7 SFTP</a></li>
+<li><a href="#118-apache-tomcat">1.1.8 Apache Tomcat</a></li>
+<li><a href="#119-ldap">1.1.9 LDAP</a></li>
+</ul>
+</li>
+<li><a href="#12-windows-11">1.2 Windows 11</a>
+<ul>
+<li><a href="#121-configuraci%C3%B3n-inicial">1.2.1 <strong>Configuración inicial</strong></a>
+<ul>
+<li><a href="#nombre-y-configuraci%C3%B3n-de-red"><strong>Nombre y configuración de red</strong></a></li>
+<li><a href="#cuentas-administradoras-1"><strong>Cuentas administradoras</strong></a></li>
+</ul>
+</li>
+<li><a href="#122-navegadores">1.2.2 <strong>Navegadores</strong></a></li>
+<li><a href="#123-filezilla">1.2.3 <strong>FileZilla</strong></a></li>
+<li><a href="#124-netbeans">1.2.4 <strong>Netbeans</strong></a>
+<ul>
+<li><a href="#creaci%C3%B3n-de-proyectos"><strong>Creación de proyectos</strong></a></li>
+</ul>
+</li>
+<li><a href="#125-visual-studio-code">1.2.5 <strong>Visual Studio Code</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-github">2. GitHub</a></li>
+<li><a href="#3entorno-de-explotaci%C3%B3n">3.Entorno de Explotación</a></li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">DAW/DWES Tema2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="file:////webroot/img/portada.jpg" alt="Alt"></td>
+</tr>
+<tr>
+<td style="text-align:center">INSTALACIÓN, CONFIGURACIÓN Y DOCUMENTACIÓN DE ENTORNO DE DESARROLLO Y DEL ENTORNO DE EXPLOTACIÓN</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-entorno-de-desarrollo">1. Entorno de Desarrollo</h2>
+<h3 id="11-ubuntu-server-24043-lts">1.1 Ubuntu Server 24.04.3 LTS</h3>
+<p>Este documento es una guía detallada del proceso de instalación y configuración de un servidor de aplicaciones en Ubuntu Server utilizando Apache, con soporte PHP y MySQL</p>
+<h4 id="111-configuración-inicial">1.1.1 <strong>Configuración inicial</strong></h4>
+<h5 id="nombre-y-configuraicón-de-red">Nombre y configuraicón de red</h5>
+<blockquote>
+<p><strong>Nombre de la máquina</strong>: jenc-used<br>
+<strong>Memoria RAM</strong>: 2G<br>
+<strong>Particiones</strong>: 150G(/) y resto (/var)<br>
+<strong>Configuración de red interface</strong>: xxxx <br>
+<strong>Dirección IP</strong> :10.199.9.174/22<br>
+<strong>GW</strong>: 10.199.8.1/22<br>
+<strong>DNS</strong>: 10.151.123.21 y 10.151.126.21</p>
+</blockquote>
+<p>Primero copiaremos el archivo de red <strong>/etc/netplan/50-cloud-init.yaml</strong> y lo llamaremos <strong>enp0s3.yaml</strong> en la misma carpeta.</p>
+<pre><code class="language-bash"><span class="hljs-built_in">cd</span> ../../etc/netplan
+<span class="hljs-built_in">cp</span> 50-cloud-init.yaml enp0s3.yaml
+</code></pre>
+<p>Despues editaremos el fichero de configuración del interface de red  <strong>/etc/netplan/enp0s3.yaml</strong> de la siguiente manera,</p>
+<pre><code class="language-bash">sudo nano enp0s3.yaml
+</code></pre>
+<pre><code class="language-bash">
+<span class="hljs-comment"># This is the network config written by &#x27;subiquity&#x27;</span>
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: <span class="hljs-literal">false</span>
+      dhcp6: <span class="hljs-literal">false</span>
+      addresses: [10.199.9.174/22]
+      nameservers:
+        addresses: [10.151.123.21,10.151.126.21]
+        search: [educa.jcyl.es]
+      routes:
+        - to : default
+          via: 10.199.8.1
+</code></pre>
+<p>Despues de haber aplicado esta configuración haremos una copia de seguridad.</p>
+<pre><code class="language-bash">sudo <span class="hljs-built_in">cp</span> enp0s3.yaml enp0s3.yaml.bk.fecha
+</code></pre>
+<p>Despues usaremos el comando <strong>sudo netplan apply</strong> para aplicar la configuración.</p>
+<p>Probaremos si funciona haciendo ping a la gateway, al dns, a una pagina web y a otra maquina en la misma red.</p>
+<pre><code class="language-bash">ping 10.199.11.84
+ping 10.199.8.1
+ping 10.151.123.21
+ping www.google.com
+</code></pre>
+<p>Si obtenemos respuesta de todas correctamente, tendremos la configuración de red finalizada.</p>
+<p>Podria ser que este desactivado en la red el protocolo para hacer ping fuera de esta y por esto no deje hacer ping al dns o a internet.</p>
+<h5 id="actualizar-el-sistema"><strong>Actualizar el sistema</strong></h5>
+<pre><code class="language-bash">sudo apt update
+sudo apt upgrade
+</code></pre>
+<h5 id="configuración-fecha-y-hora"><strong>Configuración fecha y hora</strong></h5>
+<p><a href="https://somebooks.es/establecer-la-fecha-hora-y-zona-horaria-en-la-terminal-de-ubuntu-20-04-lts/" title="Cambiar fecha y hora">Establecer fecha, hora y zona horaria</a></p>
+<h5 id="cuentas-administradoras"><strong>Cuentas administradoras</strong></h5>
+<p>De base el sistema tiene la cuenta <strong>root</strong>, y la cuenta <em><strong>miadmin</strong></em> la habremos configurado en la instalación del sistema, esta ya sería administrador.</p>
+<p>Tendremos que crear otra cuenta y hacerla administrador, esta se llamara <strong>miadmin2</strong>.</p>
+<blockquote>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> root(inicio)</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> miadmin/paso</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> miadmin2/paso</li>
+</ul>
+</blockquote>
+<p>useradd miadmin2</p>
+<h5 id="habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></h5>
+<p>Primero usaremos el comando <strong>sudo ufw enable</strong> para habilitar el cortafuegos.</p>
+<p>Despues usaremos el comando <strong>sudo ufw allow 22</strong> para permitir el acceso al puerto 22, el cual es el puerto de SSH, a partir de este momento la maquina podra ser operada en remoto desde la red.</p>
+<p>Luego usaremos <strong>sudo ufw status numbered</strong> para comprobar el estado del cortafuegos y ver los puertos abiertos, usaremos <strong>sudo ufw delete 2 (O el numero de regla que sea)</strong> para cerrar el puerto 22 en ipV6, ya que representa una vulnerabilidad.</p>
+<p>Por ultimo usaremos <strong>ufw status</strong> para ver el estado del cortafuegos y los puertos abiertos de este.</p>
+<pre><code class="language-bash">sudo ufw <span class="hljs-built_in">enable</span>
+sudo ufw allow 22
+sudo ufw status numbered
+sudo ufw delete 2
+sudo ufw status
+</code></pre>
+<h4 id="112-instalación-del-servidor-web">1.1.2 Instalación del servidor web</h4>
+<p>Cambiar sites-enabled/000noseque y cambiar err dir a /var/www/html/error/error.log (Primero crear el directorio)</p>
+<p>apache2.conf cambiar AllowOverride None por AllowOverride All.</p>
+<h5 id="instalación">Instalación</h5>
+<h5 id="verficación-del-servicio">Verficación del servicio</h5>
+<h5 id="virtual-hosts">Virtual Hosts</h5>
+<h5 id="permisos-y-usuarios">Permisos y usuarios</h5>
+<h4 id="113-php">1.1.3 PHP</h4>
+<p>---instalar php---</p>
+<pre><code class="language-bash">sudo apt install software-properties-common -y
+sudo add-apt-repository ppa:ondrej/php -y
+<span class="hljs-built_in">ls</span> /etc/apt/sources.list.d/ | grep ondrej	(Comprobar que se instalo)
+sudo apt update
+sudo apt install libapache2-mod-php8.3 php8.3-fpm -y
+sudo a2enmod proxy_fcgi
+sudo a2dismod php8.3
+sudo a2dismod mpm_prefork
+sudo a2enmod mpm_event proxy_fcgi
+sudo a2enconf php8.3-fpm
+sudo systemctl restart apache2
+</code></pre>
+<p>---Configurar php---</p>
+<pre><code class="language-bash">/etc/php/8.3/fpm
+Hacer copia de seguridad de php.ini
+Cambiar:
+  display_errors = On
+  display_startup_errors = On
+  memory_limit = 250M
+</code></pre>
+<h4 id="114-mysql">1.1.4 MySQL</h4>
+<h4 id="115-xdebug">1.1.5 XDebug</h4>
+<h4 id="116-dns">1.1.6 DNS</h4>
+<h4 id="117-sftp">1.1.7 SFTP</h4>
+<h4 id="118-apache-tomcat">1.1.8 Apache Tomcat</h4>
+<h4 id="119-ldap">1.1.9 LDAP</h4>
+<h3 id="12-windows-11">1.2 Windows 11</h3>
+<h4 id="121-configuración-inicial">1.2.1 <strong>Configuración inicial</strong></h4>
+<h5 id="nombre-y-configuración-de-red"><strong>Nombre y configuración de red</strong></h5>
+<h5 id="cuentas-administradoras-1"><strong>Cuentas administradoras</strong></h5>
+<h4 id="122-navegadores">1.2.2 <strong>Navegadores</strong></h4>
+<h4 id="123-filezilla">1.2.3 <strong>FileZilla</strong></h4>
+<h4 id="124-netbeans">1.2.4 <strong>Netbeans</strong></h4>
+<h5 id="creación-de-proyectos"><strong>Creación de proyectos</strong></h5>
+<p>Al crear un proyecto seleccionar <strong>PHP -&gt; PHP Application</strong></p>
+<p>Los proyectos han de estar localizados en la carpeta de proyectos, todos al nivel base, el proyecto y la carpeta han de ser iguales.</p>
+<p>Hay que seleccionar <strong>Run as: Remote Web Site</strong>, lo siguiente hay que crear una conexion con el servidor web.</p>
+<p>En la pantalla de creación de conexión hay que ponerle un nombre significativo a la coenxión, como el nombre de la maquina a la que se conecta, hay que poner la ip de la maquina y el puerto usado en sftp(22), el usuario web que se vaya a usar para subir los archivos y su contraseña, el resto se deja por defecto.</p>
+<p>Despues hay que probar la conexión para ver que funciona bien. (Si dice que la autenticidad no se puede comprobar no importa).</p>
+<p><img src="file:////webroot/img/remoteConexion.png" alt="Alt"></p>
+<p>El directorio de subida tambien se tiene que llamar igual que el proyecto.</p>
+<p>El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.</p>
+<h4 id="125-visual-studio-code">1.2.5 <strong>Visual Studio Code</strong></h4>
+<h2 id="2-github">2. GitHub</h2>
+<h2 id="3entorno-de-explotación">3.Entorno de Explotación</h2>
+<hr>
+<blockquote>
+<p><strong>James Edward Nuñez Cuzcano</strong><br>
+Curso: 2025/2026<br>
+2º Curso CFGS Desarrollo de Aplicaciones Web<br>
+Despliegue de aplicaciones web</p>
+</blockquote>
+
+            
+            
+        </body>
+        </html>

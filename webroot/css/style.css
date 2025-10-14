@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+body {
+    background-color: DAF7DC;
+}
+
+.center-container {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top: 50vh;
+    left: 50vw;
+    max-height: 72vh;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.header {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    position: fixed;
+    transform: translate(-50%, 0);
+    left: 50vw;
+    height: 13vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    background-color: #2F4858;
+    color: white;
+    padding: 2em;
+}
+
+.home {
+    position: fixed;
+    transform: translate(-50%, 0);
+    left: 90vw;
+}
+
+.footer {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    position: fixed;
+    height: 13vh;
+    transform: translate(-50%, 0);
+    left: 50vw;
+    top: 87.5vh;
+
+    background-color: #2F4858;
+    color: white;
+    padding: 2em;
+}
+
+button {
+    border-radius: 1em;
+    background-color: #2F4858;
+    color: white;
+    padding: 0.3em;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    max-height: 10em;
+    margin: 1em;
+    height: match-parent;
+    width: match-parent;
+    font-size: 2em;
+}
+
+.active:hover {
+    background-color: #336699;
+}
+
+table h2 {
+    border-radius: 1em;
+    background-color: #2F4858;
+    color: white;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+img {
+    max-height: 8vh;
+    min-width: 8vh;
+}
