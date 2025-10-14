@@ -153,6 +153,7 @@
 <li><a href="#configuraci%C3%B3n-fecha-y-hora"><strong>Configuración fecha y hora</strong></a></li>
 <li><a href="#cuentas-administradoras"><strong>Cuentas administradoras</strong></a></li>
 <li><a href="#habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></a></li>
+<li><a href="#memeoria-y-almacenamiento"><strong>Memeoria y almacenamiento</strong></a></li>
 </ul>
 </li>
 <li><a href="#112-instalaci%C3%B3n-del-servidor-web">1.1.2 Instalación del servidor web</a>
@@ -205,7 +206,7 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center"><img src="file:////webroot/img/portada.jpg" alt="Alt"></td>
+<td style="text-align:center"><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\portada.jpg" alt="Alt"></td>
 </tr>
 <tr>
 <td style="text-align:center">INSTALACIÓN, CONFIGURACIÓN Y DOCUMENTACIÓN DE ENTORNO DE DESARROLLO Y DEL ENTORNO DE EXPLOTACIÓN</td>
@@ -226,7 +227,20 @@
 <strong>GW</strong>: 10.199.8.1/22<br>
 <strong>DNS</strong>: 10.151.123.21 y 10.151.126.21</p>
 </blockquote>
-<p>Primero copiaremos el archivo de red <strong>/etc/netplan/50-cloud-init.yaml</strong> y lo llamaremos <strong>enp0s3.yaml</strong> en la misma carpeta.</p>
+<p>Para cambiar el nombre de la maquina iremos al fichero <strong>/etc/hostname</strong> y aqui cambiaremos su contenido por el nombre de usuario deseado, despues iremos al fichero <strong>/etc/hosts</strong> y cambiaremos el nombre que pone en la segunda linea por el mismo que pusimos en el anterior fichero.</p>
+<pre><code class="language-bash">127.0.0.1 localhost
+127.0.1.1 jenc-used2
+
+<span class="hljs-comment"># The following lines are desirable for IPv6 capable hosts</span>
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+</code></pre>
+<p>Despues usamos <strong>hostnamectl set-hostname nombre</strong> y ya estaría cambiado el nombre de la maquina.</p>
+<p>Para ver el nombre de la maquina usaremos <strong>hostname</strong> o <strong>hostnamectl</strong> que contiene mas información.</p>
+<p>Para configurar la red, primero copiaremos el archivo de red <strong>/etc/netplan/50-cloud-init.yaml</strong> y lo llamaremos <strong>enp0s3.yaml</strong> en la misma carpeta.</p>
 <pre><code class="language-bash"><span class="hljs-built_in">cd</span> ../../etc/netplan
 <span class="hljs-built_in">cp</span> 50-cloud-init.yaml enp0s3.yaml
 </code></pre>
@@ -261,15 +275,31 @@ ping www.google.com
 </code></pre>
 <p>Si obtenemos respuesta de todas correctamente, tendremos la configuración de red finalizada.</p>
 <p>Podria ser que este desactivado en la red el protocolo para hacer ping fuera de esta y por esto no deje hacer ping al dns o a internet.</p>
+<p>Para comprobar la ip usaremos <strong>ip a</strong></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipa.png" alt="Alt"></p>
+<p>Para comprobar la gateway usaremos <strong>ip r</strong></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipr.png" alt="Alt"></p>
+<p>Para comprobar los dns y el dominio usaremos <strong>resolvectl</strong></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\resolvectl.png" alt="Alt"></p>
 <h5 id="actualizar-el-sistema"><strong>Actualizar el sistema</strong></h5>
 <pre><code class="language-bash">sudo apt update
 sudo apt upgrade
 </code></pre>
 <h5 id="configuración-fecha-y-hora"><strong>Configuración fecha y hora</strong></h5>
-<p><a href="https://somebooks.es/establecer-la-fecha-hora-y-zona-horaria-en-la-terminal-de-ubuntu-20-04-lts/" title="Cambiar fecha y hora">Establecer fecha, hora y zona horaria</a></p>
+<p>Para ver la informacion de la zona horaria, fecha y hora usaremos <strong>timedatectl</strong>, si no es correcto usaremos <strong>timedatectl set-timezone Europe/Madrid</strong> para establecer la zona horaria en madrid, para ver otras zonas horarias usaremos <strong>timedatectl list-timezones</strong> y sustituiremos Europe/Madrid por la zona horaria deseada.</p>
+<p><a href="https://somebooks.es/establecer-la-fecha-hora-y-zona-horaria-en-la-terminal-de-ubuntu-20-04-lts/" title="Cambiar fecha y hora">Información mas detallada</a></p>
 <h5 id="cuentas-administradoras"><strong>Cuentas administradoras</strong></h5>
 <p>De base el sistema tiene la cuenta <strong>root</strong>, y la cuenta <em><strong>miadmin</strong></em> la habremos configurado en la instalación del sistema, esta ya sería administrador.</p>
 <p>Tendremos que crear otra cuenta y hacerla administrador, esta se llamara <strong>miadmin2</strong>.</p>
+<p>Primero comprobaremos los grupos del usuario <strong>miadmin</strong></p>
+<pre><code class="language-bash"><span class="hljs-built_in">groups</span> miadmin
+</code></pre>
+<p>Despues crearemos el usuario <strong>miadmin2</strong> y le asignaremos todos los grupos de miadmin menos el grupo personal (El que tiene su nombre)</p>
+<pre><code class="language-bash">sudo useradd -m -G  sudo,adm,cdrom,dip,plugdev miadmin2
+</code></pre>
+<p>Despues le pondremos contraseña.</p>
+<pre><code class="language-bash">sudo passwd miadmin2
+</code></pre>
 <blockquote>
 <ul class="contains-task-list">
 <li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> root(inicio)</li>
@@ -277,7 +307,6 @@ sudo apt upgrade
 <li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> miadmin2/paso</li>
 </ul>
 </blockquote>
-<p>useradd miadmin2</p>
 <h5 id="habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></h5>
 <p>Primero usaremos el comando <strong>sudo ufw enable</strong> para habilitar el cortafuegos.</p>
 <p>Despues usaremos el comando <strong>sudo ufw allow 22</strong> para permitir el acceso al puerto 22, el cual es el puerto de SSH, a partir de este momento la maquina podra ser operada en remoto desde la red.</p>
@@ -289,7 +318,22 @@ sudo ufw status numbered
 sudo ufw delete 2
 sudo ufw status
 </code></pre>
+<h5 id="memeoria-y-almacenamiento"><strong>Memeoria y almacenamiento</strong></h5>
+<p>Para ver la memoria del sistema usaremos <strong>free -h</strong>.</p>
+<p>Para ver el almacenamiento del sistema usaremos <strong>df -h</strong>.</p>
 <h4 id="112-instalación-del-servidor-web">1.1.2 Instalación del servidor web</h4>
+<p>Primero tendremos que actualizar el sistema, despues instalaremos apache2, luego comprobaremos que apache2 esta activo, si este esta activo tendremos que abrir el puerto 80 en el cortafuegos, luego quitaremos la regla de v6 ya que representa una vulnerabilidad, despues usaremos <strong>ufw status</strong> para ver que el puerto 80 esta abierto en este.</p>
+<p>Si al entrar desde otro equipo a la ip del servidor sale apache works, el servidor funciona correctamente.</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt upgrade
+sudo apt install apache2
+sudo systemctl status apache2
+sudo ufw allow 80
+sudo ufw delete 3 (o el numero de regla que sea)
+sudo ufw status
+</code></pre>
+<p>Lo siguiente  sudo adduser --home /var/www/html --shell /bin/bash --ingroup  www-data operadorweb2</p>
+<p>sudo useradd -d /var/www/html -s /bin/bash -G www-data opeardorweb</p>
 <p>Cambiar sites-enabled/000noseque y cambiar err dir a /var/www/html/error/error.log (Primero crear el directorio)</p>
 <p>apache2.conf cambiar AllowOverride None por AllowOverride All.</p>
 <h5 id="instalación">Instalación</h5>
@@ -337,7 +381,7 @@ Cambiar:
 <p>Hay que seleccionar <strong>Run as: Remote Web Site</strong>, lo siguiente hay que crear una conexion con el servidor web.</p>
 <p>En la pantalla de creación de conexión hay que ponerle un nombre significativo a la coenxión, como el nombre de la maquina a la que se conecta, hay que poner la ip de la maquina y el puerto usado en sftp(22), el usuario web que se vaya a usar para subir los archivos y su contraseña, el resto se deja por defecto.</p>
 <p>Despues hay que probar la conexión para ver que funciona bien. (Si dice que la autenticidad no se puede comprobar no importa).</p>
-<p><img src="file:////webroot/img/remoteConexion.png" alt="Alt"></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\remoteConexion.png" alt="Alt"></p>
 <p>El directorio de subida tambien se tiene que llamar igual que el proyecto.</p>
 <p>El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.</p>
 <h4 id="125-visual-studio-code">1.2.5 <strong>Visual Studio Code</strong></h4>
