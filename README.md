@@ -18,6 +18,8 @@
         - [Virtual Hosts](#virtual-hosts)
         - [Permisos y usuarios](#permisos-y-usuarios)
       - [1.1.3 PHP](#113-php)
+        - [Instalar php](#instalar-php)
+        - [Configurar php](#configurar-php)
       - [1.1.4 MySQL](#114-mysql)
       - [1.1.5 XDebug](#115-xdebug)
       - [1.1.6 DNS](#116-dns)
@@ -224,14 +226,43 @@ sudo ufw delete 3 (o el numero de regla que sea)
 sudo ufw status
 ```
 
-Lo siguiente  sudo adduser --home /var/www/html --shell /bin/bash --ingroup  www-data operadorweb2
+Lo siguiente es crear las cuentas de los usuarios web, se pueden crar de 2 formas, con **addduser** puedes ponerle la contraseña en la creación de la cuenta y con **useradd** tienes que usar **passwd** para ponerle la contraseña.
 
-sudo useradd -d /var/www/html -s /bin/bash -G www-data opeardorweb
+```bash
+sudo adduser --home /var/www/html --shell /bin/bash --ingroup  www-data operadorweb
 
+sudo useradd -d /var/www/html -s /bin/bash -G www-data operadorweb
+sudo passwd operadorweb
+```
 
-Cambiar sites-enabled/000noseque y cambiar err dir a /var/www/html/error/error.log (Primero crear el directorio)
+Despues iremos al directorio **/etc/apache2/sites-enabled** y aqui cambiaremos el deirectorio de errores al deseado.
 
-apache2.conf cambiar AllowOverride None por AllowOverride All.
+Recordar que primero el directorio debe existir.
+
+```bash
+sudo nano /etc/apache2/sites-enabled/000-default.conf
+
+        ErrorLog /var/www/html/error/error.log
+```
+
+Despues iremos al directorio **/etc/apache2/apache2.conf** y aqui cambiaremos el allow override del directorio **/var/www/** de none a All.
+
+```bash
+sudo nano /etc/apache2/apache2.conf
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+</Directory>
+```
+
+Finalmente reiniciaremos el servicio apache2 y comprobaremos que funciona, si el servicio de apache2 funciona ya estara configurado.
+
+```bash
+sudo systemctl restart apache2
+sudo systemctl status apache2
+```
 
 ##### Instalación
 ##### Verficación del servicio
@@ -240,23 +271,43 @@ apache2.conf cambiar AllowOverride None por AllowOverride All.
 
 #### 1.1.3 PHP
 
----instalar php---
+##### Instalar php
+
+Primero tendremos que instalar la libreria para las dependencias y despues las dependencias de php con **ppa:ondrej/php**, despues tendremos que revisar que se han insatalado correctamente.
 
 ```bash
 sudo apt install software-properties-common -y
 sudo add-apt-repository ppa:ondrej/php -y
-ls /etc/apt/sources.list.d/ | grep ondrej	(Comprobar que se instalo)
-sudo apt update
-sudo apt install libapache2-mod-php8.3 php8.3-fpm -y
-sudo a2enmod proxy_fcgi
-sudo a2dismod php8.3
-sudo a2dismod mpm_prefork
-sudo a2enmod mpm_event proxy_fcgi
-sudo a2enconf php8.3-fpm
-sudo systemctl restart apache2
+
+ls /etc/apt/sources.list.d/ | grep ondrej
 ```
 
----Configurar php---
+Luego tendremos que hacer update y upgrade e instalar php-fpm
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install php8.3-fpm -y
+```
+
+Despues tendremos que desabilitar y habilitar una serie de modulos para que apache se pueda comunicar con php-fpm.
+
+```bash
+sudo a2enmod proxy_fcgi mpm_event
+sudo a2dismod mpm_prefork
+sudo a2enconf php8.3-fpm
+```
+
+Finalmente reiniciaremos apache y revisaremos sin ambos servicios funcionan correctamente.
+
+```bash
+sudo systemctl restart apache2
+sudo systemctl status apache2
+sudo systemctl status php8.3-fpm
+```
+
+
+##### Configurar php
 
 ```bash
 /etc/php/8.3/fpm
@@ -294,11 +345,13 @@ En la pantalla de creación de conexión hay que ponerle un nombre significativo
 
 Despues hay que probar la conexión para ver que funciona bien. (Si dice que la autenticidad no se puede comprobar no importa).
 
-![Alt](webroot/img/remoteConexion.png)
+![Alt](./webroot/img/remoteConexion.png)
 
 El directorio de subida tambien se tiene que llamar igual que el proyecto.
 
 El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.
+
+Para borrar un proyecto solamente hay que hacer click derecho en el proyecto y darle a **borrar** 
 
 #### 1.2.5 **Visual Studio Code**
 

@@ -164,7 +164,12 @@
 <li><a href="#permisos-y-usuarios">Permisos y usuarios</a></li>
 </ul>
 </li>
-<li><a href="#113-php">1.1.3 PHP</a></li>
+<li><a href="#113-php">1.1.3 PHP</a>
+<ul>
+<li><a href="#instalar-php">Instalar php</a></li>
+<li><a href="#configurar-php">Configurar php</a></li>
+</ul>
+</li>
 <li><a href="#114-mysql">1.1.4 MySQL</a></li>
 <li><a href="#115-xdebug">1.1.5 XDebug</a></li>
 <li><a href="#116-dns">1.1.6 DNS</a></li>
@@ -332,29 +337,59 @@ sudo ufw allow 80
 sudo ufw delete 3 (o el numero de regla que sea)
 sudo ufw status
 </code></pre>
-<p>Lo siguiente  sudo adduser --home /var/www/html --shell /bin/bash --ingroup  www-data operadorweb2</p>
-<p>sudo useradd -d /var/www/html -s /bin/bash -G www-data opeardorweb</p>
-<p>Cambiar sites-enabled/000noseque y cambiar err dir a /var/www/html/error/error.log (Primero crear el directorio)</p>
-<p>apache2.conf cambiar AllowOverride None por AllowOverride All.</p>
+<p>Lo siguiente es crear las cuentas de los usuarios web, se pueden crar de 2 formas, con <strong>addduser</strong> puedes ponerle la contraseña en la creación de la cuenta y con <strong>useradd</strong> tienes que usar <strong>passwd</strong> para ponerle la contraseña.</p>
+<pre><code class="language-bash">sudo adduser --home /var/www/html --shell /bin/bash --ingroup  www-data operadorweb
+
+sudo useradd -d /var/www/html -s /bin/bash -G www-data operadorweb
+sudo passwd operadorweb
+</code></pre>
+<p>Despues iremos al directorio <strong>/etc/apache2/sites-enabled</strong> y aqui cambiaremos el deirectorio de errores al deseado.</p>
+<p>Recordar que primero el directorio debe existir.</p>
+<pre><code class="language-bash">sudo nano /etc/apache2/sites-enabled/000-default.conf
+
+        ErrorLog /var/www/html/error/error.log
+</code></pre>
+<p>Despues iremos al directorio <strong>/etc/apache2/apache2.conf</strong> y aqui cambiaremos el allow override del directorio <strong>/var/www/</strong> de none a All.</p>
+<pre><code class="language-bash">sudo nano /etc/apache2/apache2.conf
+
+&lt;Directory /var/www/&gt;
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+&lt;/Directory&gt;
+</code></pre>
+<p>Finalmente reiniciaremos el servicio apache2 y comprobaremos que funciona, si el servicio de apache2 funciona ya estara configurado.</p>
+<pre><code class="language-bash">sudo systemctl restart apache2
+sudo systemctl status apache2
+</code></pre>
 <h5 id="instalación">Instalación</h5>
 <h5 id="verficación-del-servicio">Verficación del servicio</h5>
 <h5 id="virtual-hosts">Virtual Hosts</h5>
 <h5 id="permisos-y-usuarios">Permisos y usuarios</h5>
 <h4 id="113-php">1.1.3 PHP</h4>
-<p>---instalar php---</p>
+<h5 id="instalar-php">Instalar php</h5>
+<p>Primero tendremos que instalar la libreria para las dependencias y despues las dependencias de php con <strong>ppa:ondrej/php</strong>, despues tendremos que revisar que se han insatalado correctamente.</p>
 <pre><code class="language-bash">sudo apt install software-properties-common -y
 sudo add-apt-repository ppa:ondrej/php -y
-<span class="hljs-built_in">ls</span> /etc/apt/sources.list.d/ | grep ondrej	(Comprobar que se instalo)
-sudo apt update
-sudo apt install libapache2-mod-php8.3 php8.3-fpm -y
-sudo a2enmod proxy_fcgi
-sudo a2dismod php8.3
-sudo a2dismod mpm_prefork
-sudo a2enmod mpm_event proxy_fcgi
-sudo a2enconf php8.3-fpm
-sudo systemctl restart apache2
+
+<span class="hljs-built_in">ls</span> /etc/apt/sources.list.d/ | grep ondrej
 </code></pre>
-<p>---Configurar php---</p>
+<p>Luego tendremos que hacer update y upgrade e instalar php-fpm</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt upgrade
+sudo apt install php8.3-fpm -y
+</code></pre>
+<p>Despues tendremos que desabilitar y habilitar una serie de modulos para que apache se pueda comunicar con php-fpm.</p>
+<pre><code class="language-bash">sudo a2enmod proxy_fcgi mpm_event
+sudo a2dismod mpm_prefork
+sudo a2enconf php8.3-fpm
+</code></pre>
+<p>Finalmente reiniciaremos apache y revisaremos sin ambos servicios funcionan correctamente.</p>
+<pre><code class="language-bash">sudo systemctl restart apache2
+sudo systemctl status apache2
+sudo systemctl status php8.3-fpm
+</code></pre>
+<h5 id="configurar-php">Configurar php</h5>
 <pre><code class="language-bash">/etc/php/8.3/fpm
 Hacer copia de seguridad de php.ini
 Cambiar:
@@ -384,6 +419,7 @@ Cambiar:
 <p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\remoteConexion.png" alt="Alt"></p>
 <p>El directorio de subida tambien se tiene que llamar igual que el proyecto.</p>
 <p>El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.</p>
+<p>Para borrar un proyecto solamente hay que hacer click derecho en el proyecto y darle a <strong>borrar</strong></p>
 <h4 id="125-visual-studio-code">1.2.5 <strong>Visual Studio Code</strong></h4>
 <h2 id="2-github">2. GitHub</h2>
 <h2 id="3entorno-de-explotación">3.Entorno de Explotación</h2>
