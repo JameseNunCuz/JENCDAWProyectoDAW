@@ -1,8 +1,3 @@
-/nbproject
-<<<<<<< Updated upstream
-/error
-=======
-/error
-README.html
-/.vscode
->>>>>>> Stashed changes
+.vscode
+nbproject
+error
