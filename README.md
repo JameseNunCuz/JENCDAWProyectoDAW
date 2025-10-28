@@ -10,17 +10,18 @@
         - [**Actualizar el sistema**](#actualizar-el-sistema)
         - [**Configuración fecha y hora**](#configuración-fecha-y-hora)
         - [**Cuentas administradoras**](#cuentas-administradoras)
+        - [**Memoria y almacenamiento**](#memoria-y-almacenamiento)
         - [**Habilitar cortafuegos**](#habilitar-cortafuegos)
-        - [**Memeoria y almacenamiento**](#memeoria-y-almacenamiento)
+      - [**Instalar antivirus**](#instalar-antivirus)
       - [1.1.2 Instalación del servidor web](#112-instalación-del-servidor-web)
-        - [Instalación](#instalación)
-        - [Verficación del servicio](#verficación-del-servicio)
-        - [Virtual Hosts](#virtual-hosts)
-        - [Permisos y usuarios](#permisos-y-usuarios)
-      - [1.1.3 PHP](#113-php)
+      - [1.1.3 PHP FPM](#113-php-fpm)
         - [Instalar php](#instalar-php)
         - [Configurar php](#configurar-php)
-      - [1.1.4 MySQL](#114-mysql)
+      - [1.1.4 MariaDb](#114-mariadb)
+        - [Instalación](#instalación)
+      - [**------ Modulos php ------**](#-------modulos-php-------)
+        - [**a) php8.3-mysql**](#a-php83-mysql)
+        - [**b) php8.3-intl**](#b-php83-intl)
       - [1.1.5 XDebug](#115-xdebug)
       - [1.1.6 DNS](#116-dns)
       - [1.1.7 SFTP](#117-sftp)
@@ -184,6 +185,12 @@ sudo passwd miadmin2
 > - [X] miadmin/paso
 > - [X] miadmin2/paso
 
+ ##### **Memoria y almacenamiento**
+
+Para ver la memoria del sistema usaremos **free -h**.
+
+Para ver el almacenamiento del sistema usaremos **df -h**.
+
 ##### **Habilitar cortafuegos**
 
 Primero usaremos el comando **sudo ufw enable** para habilitar el cortafuegos.
@@ -195,7 +202,6 @@ Luego usaremos **sudo ufw status numbered** para comprobar el estado del cortafu
 
 Por ultimo usaremos **ufw status** para ver el estado del cortafuegos y los puertos abiertos de este.
 
-
 ```bash
 sudo ufw enable
 sudo ufw allow 22
@@ -204,11 +210,18 @@ sudo ufw delete 2
 sudo ufw status
 ```
 
-##### **Memeoria y almacenamiento**
+#### **Instalar antivirus**
 
-Para ver la memoria del sistema usaremos **free -h**.
+Instalaremos el antivirus clamav, despues pararemos el servicio y actualizaremos la base de datos de virus, depues volveremos a iniciarlo y ya estaria instalado y funcional. Importante no instalar el clamav daemon, consume muchisimos recursos del sistema.
 
-Para ver el almacenamiento del sistema usaremos **df -h**.
+```bash
+sudo apt install clamav
+sudo systemctl stop clamav-freshclam
+sudo freshclam
+sudo systemctl start clamav-freshclam
+```
+
+Para ver la version instalada **clamscan -V**
 
 #### 1.1.2 Instalación del servidor web
 
@@ -235,9 +248,15 @@ sudo useradd -d /var/www/html -s /bin/bash -G www-data operadorweb
 sudo passwd operadorweb
 ```
 
+Importante no olvidar cambiar el dueño de la carpeta **/var/www/html** al grupo www-data.
+
+```bash
+sudo chown -R www-data:www-data /var/www/html
+```
+
 Despues iremos al directorio **/etc/apache2/sites-enabled** y aqui cambiaremos el deirectorio de errores al deseado.
 
-Recordar que primero el directorio debe existir.
+Recordar que primero el directorio debe existir, si no existe crearlo con **mkdir**.
 
 ```bash
 sudo nano /etc/apache2/sites-enabled/000-default.conf
@@ -264,12 +283,7 @@ sudo systemctl restart apache2
 sudo systemctl status apache2
 ```
 
-##### Instalación
-##### Verficación del servicio
-##### Virtual Hosts
-##### Permisos y usuarios
-
-#### 1.1.3 PHP
+#### 1.1.3 PHP FPM
 
 ##### Instalar php
 
@@ -318,7 +332,91 @@ Cambiar:
   memory_limit = 250M
 ```
 
-#### 1.1.4 MySQL
+Si en algun momento se quiere modificar la version que php usa se podra cambiar con este comando, esto es especialmente util si se nota que php no esta funcionando como unos espera.
+
+```bash
+sudo update-alternatives --config php
+```
+
+#### 1.1.4 MariaDb
+
+##### Instalación
+
+Primero instalaremos el servicio mariadb, después tendremos que cambiar en el fichero de configuración el puerto y las direcciones desde las que se puede accder al servicio de local a todas, finalmente tendremos que reiniciar el servicio de mariadb y comprobar que esta funcionando en 0.0.0.0 y el puerto 3306.
+
+```bash
+sudo apt udpate
+sudo apt install mariadb-server -y
+
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+      port=3306 (Esto por ahora no ha echo falta)
+      bind-address = 0.0.0.0
+
+sudo systemctl restart mariadb
+sudo ss -punta |grep mariadb
+```
+
+Lo siguiente tendremos que abrir el puerto 3306 en el firewall y deshabilitar la regla v6.
+
+```bash
+sudo ufw allow 3306
+sudo ufw status numbered
+sudo ufw delete 5 (Nºde la regla v6 del puerto)
+sudo ufw status
+```
+
+Ahora entraremos a la consola de mariadb y tendremos que crear un usuario administrador, luego comprobaremos que existe y tiene accesoa a todo.
+
+```bash
+sudo mariadb
+GRANT ALL ON *.* TO 'adminsql'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+SELECT User, Host FROM mysql.user;
+```
+
+Despues tendremos que ejecutar el script de seguridad de sql para aseguraranos de que esta seguro.
+
+```bash
+sudo mysql_secure_installation
+```
+
+-En el primer paso preguntará por la contraseña de root para MariaDB, pulsa la tecla Enter ya que no hay contraseña definida.
+
+-La siguiente, preguntará si quieres asignar una contraseña para el usuario “root", indicar que si y poner paso de contraseña.
+
+-En el tercer paso preguntará si quieres eliminar usuario anónimo, aquí indica que Sí quieres borrar los datos.
+
+-Después preguntará si quieres desactivar el acceso remoto del usuario “root”, aquí indica que Sí quieres desactivar acceso remoto para usuario por seguridad.
+
+-De nuevo preguntará si quieres eliminar la base de datos test, aquí indica de nuevo que Sí quieres borrar las base de datos de prueba.
+
+-Por último, preguntará si quieres recargar privilegios, aquí indica que Sí.
+
+#### **------ Modulos php ------**
+
+##### **a) php8.3-mysql**
+
+Instalaremos la extensión que permite a PHP conectarse y comunicarse con servidores de bases de datos MySQL o MariaDB. Sin este módulo, PHP no puede ejecutar consultas SQL, ni leer, ni escribir datos en su base de datos. Instalación del módulo php8.3-mysql y reiniciar el servicio php8.3-fpm
+
+```bash
+sudo apt install php8.3-mysql
+sudo systemctl restart php-fpm.service
+sudo php -m | grep mysql
+```
+
+![Alt](webroot/img/php-m.png)
+
+##### **b) php8.3-intl**
+
+Instalaremos una extensión de internacionalización básica en la biblioteca ICU(International Components for Unicode). Permite que PHP muestre información adaptada a la región e idioma, sin que tengas que hacerlo manualmente.
+
+```bash
+sudo apt install php8.3-intl
+sudo systemctl restart php-fpm.service
+sudo php -m | grep intl
+```
+
+![Alt](webroot/img/php-mintl.png)
+
 #### 1.1.5 XDebug
 #### 1.1.6 DNS
 #### 1.1.7 SFTP

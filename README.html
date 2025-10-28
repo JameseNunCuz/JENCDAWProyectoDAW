@@ -152,25 +152,29 @@
 <li><a href="#actualizar-el-sistema"><strong>Actualizar el sistema</strong></a></li>
 <li><a href="#configuraci%C3%B3n-fecha-y-hora"><strong>Configuración fecha y hora</strong></a></li>
 <li><a href="#cuentas-administradoras"><strong>Cuentas administradoras</strong></a></li>
+<li><a href="#memoria-y-almacenamiento"><strong>Memoria y almacenamiento</strong></a></li>
 <li><a href="#habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></a></li>
-<li><a href="#memeoria-y-almacenamiento"><strong>Memeoria y almacenamiento</strong></a></li>
 </ul>
 </li>
-<li><a href="#112-instalaci%C3%B3n-del-servidor-web">1.1.2 Instalación del servidor web</a>
-<ul>
-<li><a href="#instalaci%C3%B3n">Instalación</a></li>
-<li><a href="#verficaci%C3%B3n-del-servicio">Verficación del servicio</a></li>
-<li><a href="#virtual-hosts">Virtual Hosts</a></li>
-<li><a href="#permisos-y-usuarios">Permisos y usuarios</a></li>
-</ul>
-</li>
-<li><a href="#113-php">1.1.3 PHP</a>
+<li><a href="#instalar-antivirus"><strong>Instalar antivirus</strong></a></li>
+<li><a href="#112-instalaci%C3%B3n-del-servidor-web">1.1.2 Instalación del servidor web</a></li>
+<li><a href="#113-php-fpm">1.1.3 PHP FPM</a>
 <ul>
 <li><a href="#instalar-php">Instalar php</a></li>
 <li><a href="#configurar-php">Configurar php</a></li>
 </ul>
 </li>
-<li><a href="#114-mysql">1.1.4 MySQL</a></li>
+<li><a href="#114-mariadb">1.1.4 MariaDb</a>
+<ul>
+<li><a href="#instalaci%C3%B3n">Instalación</a></li>
+</ul>
+</li>
+<li><a href="#-------modulos-php-------"><strong>------ Modulos php ------</strong></a>
+<ul>
+<li><a href="#a-php83-mysql"><strong>a) php8.3-mysql</strong></a></li>
+<li><a href="#b-php83-intl"><strong>b) php8.3-intl</strong></a></li>
+</ul>
+</li>
 <li><a href="#115-xdebug">1.1.5 XDebug</a></li>
 <li><a href="#116-dns">1.1.6 DNS</a></li>
 <li><a href="#117-sftp">1.1.7 SFTP</a></li>
@@ -211,7 +215,7 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center"><img src="file:///d:\Despliegue\JNCDAWProyectoDAW-main\webroot\img\portada.jpg" alt="Alt"></td>
+<td style="text-align:center"><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\portada.jpg" alt="Alt"></td>
 </tr>
 <tr>
 <td style="text-align:center">INSTALACIÓN, CONFIGURACIÓN Y DOCUMENTACIÓN DE ENTORNO DE DESARROLLO Y DEL ENTORNO DE EXPLOTACIÓN</td>
@@ -281,11 +285,11 @@ ping www.google.com
 <p>Si obtenemos respuesta de todas correctamente, tendremos la configuración de red finalizada.</p>
 <p>Podria ser que este desactivado en la red el protocolo para hacer ping fuera de esta y por esto no deje hacer ping al dns o a internet.</p>
 <p>Para comprobar la ip usaremos <strong>ip a</strong></p>
-<p><img src="file:///d:\Despliegue\JNCDAWProyectoDAW-main\webroot\img\ipa.png" alt="Alt"></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipa.png" alt="Alt"></p>
 <p>Para comprobar la gateway usaremos <strong>ip r</strong></p>
-<p><img src="file:///d:\Despliegue\JNCDAWProyectoDAW-main\webroot\img\ipr.png" alt="Alt"></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipr.png" alt="Alt"></p>
 <p>Para comprobar los dns y el dominio usaremos <strong>resolvectl</strong></p>
-<p><img src="file:///d:\Despliegue\JNCDAWProyectoDAW-main\webroot\img\resolvectl.png" alt="Alt"></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\resolvectl.png" alt="Alt"></p>
 <h5 id="actualizar-el-sistema"><strong>Actualizar el sistema</strong></h5>
 <pre><code class="language-bash">sudo apt update
 sudo apt upgrade
@@ -312,6 +316,9 @@ sudo apt upgrade
 <li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> miadmin2/paso</li>
 </ul>
 </blockquote>
+<h5 id="memoria-y-almacenamiento"><strong>Memoria y almacenamiento</strong></h5>
+<p>Para ver la memoria del sistema usaremos <strong>free -h</strong>.</p>
+<p>Para ver el almacenamiento del sistema usaremos <strong>df -h</strong>.</p>
 <h5 id="habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></h5>
 <p>Primero usaremos el comando <strong>sudo ufw enable</strong> para habilitar el cortafuegos.</p>
 <p>Despues usaremos el comando <strong>sudo ufw allow 22</strong> para permitir el acceso al puerto 22, el cual es el puerto de SSH, a partir de este momento la maquina podra ser operada en remoto desde la red.</p>
@@ -323,9 +330,14 @@ sudo ufw status numbered
 sudo ufw delete 2
 sudo ufw status
 </code></pre>
-<h5 id="memeoria-y-almacenamiento"><strong>Memeoria y almacenamiento</strong></h5>
-<p>Para ver la memoria del sistema usaremos <strong>free -h</strong>.</p>
-<p>Para ver el almacenamiento del sistema usaremos <strong>df -h</strong>.</p>
+<h4 id="instalar-antivirus"><strong>Instalar antivirus</strong></h4>
+<p>Instalaremos el antivirus clamav, despues pararemos el servicio y actualizaremos la base de datos de virus, depues volveremos a iniciarlo y ya estaria instalado y funcional. Importante no instalar el clamav daemon, consume muchisimos recursos del sistema.</p>
+<pre><code class="language-bash">sudo apt install clamav
+sudo systemctl stop clamav-freshclam
+sudo freshclam
+sudo systemctl start clamav-freshclam
+</code></pre>
+<p>Para ver la version instalada <strong>clamscan -V</strong></p>
 <h4 id="112-instalación-del-servidor-web">1.1.2 Instalación del servidor web</h4>
 <p>Primero tendremos que actualizar el sistema, despues instalaremos apache2, luego comprobaremos que apache2 esta activo, si este esta activo tendremos que abrir el puerto 80 en el cortafuegos, luego quitaremos la regla de v6 ya que representa una vulnerabilidad, despues usaremos <strong>ufw status</strong> para ver que el puerto 80 esta abierto en este.</p>
 <p>Si al entrar desde otro equipo a la ip del servidor sale apache works, el servidor funciona correctamente.</p>
@@ -343,8 +355,11 @@ sudo ufw status
 sudo useradd -d /var/www/html -s /bin/bash -G www-data operadorweb
 sudo passwd operadorweb
 </code></pre>
+<p>Importante no olvidar cambiar el dueño de la carpeta <strong>/var/www/html</strong> al grupo www-data.</p>
+<pre><code class="language-bash">sudo <span class="hljs-built_in">chown</span> -R www-data:www-data /var/www/html
+</code></pre>
 <p>Despues iremos al directorio <strong>/etc/apache2/sites-enabled</strong> y aqui cambiaremos el deirectorio de errores al deseado.</p>
-<p>Recordar que primero el directorio debe existir.</p>
+<p>Recordar que primero el directorio debe existir, si no existe crearlo con <strong>mkdir</strong>.</p>
 <pre><code class="language-bash">sudo nano /etc/apache2/sites-enabled/000-default.conf
 
         ErrorLog /var/www/html/error/error.log
@@ -362,11 +377,7 @@ sudo passwd operadorweb
 <pre><code class="language-bash">sudo systemctl restart apache2
 sudo systemctl status apache2
 </code></pre>
-<h5 id="instalación">Instalación</h5>
-<h5 id="verficación-del-servicio">Verficación del servicio</h5>
-<h5 id="virtual-hosts">Virtual Hosts</h5>
-<h5 id="permisos-y-usuarios">Permisos y usuarios</h5>
-<h4 id="113-php">1.1.3 PHP</h4>
+<h4 id="113-php-fpm">1.1.3 PHP FPM</h4>
 <h5 id="instalar-php">Instalar php</h5>
 <p>Primero tendremos que instalar la libreria para las dependencias y despues las dependencias de php con <strong>ppa:ondrej/php</strong>, despues tendremos que revisar que se han insatalado correctamente.</p>
 <pre><code class="language-bash">sudo apt install software-properties-common -y
@@ -397,7 +408,57 @@ Cambiar:
   display_startup_errors = On
   memory_limit = 250M
 </code></pre>
-<h4 id="114-mysql">1.1.4 MySQL</h4>
+<p>Si en algun momento se quiere modificar la version que php usa se podra cambiar con este comando, esto es especialmente util si se nota que php no esta funcionando como unos espera.</p>
+<pre><code class="language-bash">sudo update-alternatives --config php
+</code></pre>
+<h4 id="114-mariadb">1.1.4 MariaDb</h4>
+<h5 id="instalación">Instalación</h5>
+<p>Primero instalaremos el servicio mariadb, después tendremos que cambiar en el fichero de configuración el puerto y las direcciones desde las que se puede accder al servicio de local a todas, finalmente tendremos que reiniciar el servicio de mariadb y comprobar que esta funcionando en 0.0.0.0 y el puerto 3306.</p>
+<pre><code class="language-bash">sudo apt udpate
+sudo apt install mariadb-server -y
+
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+      port=3306 (Esto por ahora no ha <span class="hljs-built_in">echo</span> falta)
+      bind-address = 0.0.0.0
+
+sudo systemctl restart mariadb
+sudo ss -punta |grep mariadb
+</code></pre>
+<p>Lo siguiente tendremos que abrir el puerto 3306 en el firewall y deshabilitar la regla v6.</p>
+<pre><code class="language-bash">sudo ufw allow 3306
+sudo ufw status numbered
+sudo ufw delete 5 (Nºde la regla v6 del puerto)
+sudo ufw status
+</code></pre>
+<p>Ahora entraremos a la consola de mariadb y tendremos que crear un usuario administrador, luego comprobaremos que existe y tiene accesoa a todo.</p>
+<pre><code class="language-bash">sudo mariadb
+GRANT ALL ON *.* TO <span class="hljs-string">&#x27;adminsql&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> IDENTIFIED BY <span class="hljs-string">&#x27;password&#x27;</span> WITH GRANT OPTION;
+SELECT User, Host FROM mysql.user;
+</code></pre>
+<p>Despues tendremos que ejecutar el script de seguridad de sql para aseguraranos de que esta seguro.</p>
+<pre><code class="language-bash">sudo mysql_secure_installation
+</code></pre>
+<p>-En el primer paso preguntará por la contraseña de root para MariaDB, pulsa la tecla Enter ya que no hay contraseña definida.</p>
+<p>-La siguiente, preguntará si quieres asignar una contraseña para el usuario “root&quot;, indicar que si y poner paso de contraseña.</p>
+<p>-En el tercer paso preguntará si quieres eliminar usuario anónimo, aquí indica que Sí quieres borrar los datos.</p>
+<p>-Después preguntará si quieres desactivar el acceso remoto del usuario “root”, aquí indica que Sí quieres desactivar acceso remoto para usuario por seguridad.</p>
+<p>-De nuevo preguntará si quieres eliminar la base de datos test, aquí indica de nuevo que Sí quieres borrar las base de datos de prueba.</p>
+<p>-Por último, preguntará si quieres recargar privilegios, aquí indica que Sí.</p>
+<h4 id="-------modulos-php-------"><strong>------ Modulos php ------</strong></h4>
+<h5 id="a-php83-mysql"><strong>a) php8.3-mysql</strong></h5>
+<p>Instalaremos la extensión que permite a PHP conectarse y comunicarse con servidores de bases de datos MySQL o MariaDB. Sin este módulo, PHP no puede ejecutar consultas SQL, ni leer, ni escribir datos en su base de datos. Instalación del módulo php8.3-mysql y reiniciar el servicio php8.3-fpm</p>
+<pre><code class="language-bash">sudo apt install php8.3-mysql
+sudo systemctl restart php-fpm.service
+sudo php -m | grep mysql
+</code></pre>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\php-m.png" alt="Alt"></p>
+<h5 id="b-php83-intl"><strong>b) php8.3-intl</strong></h5>
+<p>Instalaremos una extensión de internacionalización básica en la biblioteca ICU(International Components for Unicode). Permite que PHP muestre información adaptada a la región e idioma, sin que tengas que hacerlo manualmente.</p>
+<pre><code class="language-bash">sudo apt install php8.3-intl
+sudo systemctl restart php-fpm.service
+sudo php -m | grep intl
+</code></pre>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\php-mintl.png" alt="Alt"></p>
 <h4 id="115-xdebug">1.1.5 XDebug</h4>
 <h4 id="116-dns">1.1.6 DNS</h4>
 <h4 id="117-sftp">1.1.7 SFTP</h4>
@@ -416,7 +477,7 @@ Cambiar:
 <p>Hay que seleccionar <strong>Run as: Remote Web Site</strong>, lo siguiente hay que crear una conexion con el servidor web.</p>
 <p>En la pantalla de creación de conexión hay que ponerle un nombre significativo a la coenxión, como el nombre de la maquina a la que se conecta, hay que poner la ip de la maquina y el puerto usado en sftp(22), el usuario web que se vaya a usar para subir los archivos y su contraseña, el resto se deja por defecto.</p>
 <p>Despues hay que probar la conexión para ver que funciona bien. (Si dice que la autenticidad no se puede comprobar no importa).</p>
-<p><img src="file:///d:\Despliegue\JNCDAWProyectoDAW-main\webroot\img\remoteConexion.png" alt="Alt"></p>
+<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\remoteConexion.png" alt="Alt"></p>
 <p>El directorio de subida tambien se tiene que llamar igual que el proyecto.</p>
 <p>El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.</p>
 <p>Para borrar un proyecto solamente hay que hacer click derecho en el proyecto y darle a <strong>borrar</strong></p>
