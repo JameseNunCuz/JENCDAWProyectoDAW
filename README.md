@@ -9,6 +9,7 @@
         - [Nombre y configuraicón de red](#nombre-y-configuraicón-de-red)
         - [**Actualizar el sistema**](#actualizar-el-sistema)
         - [**Configuración fecha y hora**](#configuración-fecha-y-hora)
+        - [**Configuración regional**](#configuración-regional)
         - [**Cuentas administradoras**](#cuentas-administradoras)
         - [**Memoria y almacenamiento**](#memoria-y-almacenamiento)
         - [**Habilitar cortafuegos**](#habilitar-cortafuegos)
@@ -156,6 +157,18 @@ sudo apt upgrade
 Para ver la informacion de la zona horaria, fecha y hora usaremos **timedatectl**, si no es correcto usaremos **timedatectl set-timezone Europe/Madrid** para establecer la zona horaria en madrid, para ver otras zonas horarias usaremos **timedatectl list-timezones** y sustituiremos Europe/Madrid por la zona horaria deseada.
 
 [Información mas detallada](https://somebooks.es/establecer-la-fecha-hora-y-zona-horaria-en-la-terminal-de-ubuntu-20-04-lts/ "Cambiar fecha y hora")
+
+##### **Configuración regional**
+
+Con **locale** podremos ver la información de idioma y región aplicados, con **locale -a** podremos ver la lista de locales instalados, para instalar uno nuevo **sudo locale-gen es_ES.UTF-8**, los locales se contienen por defecto en **/etc/default/locale**
+
+```bash
+sudo locale-gen en_GB.UTF-8
+sudo locale-gen pt_PT.UTF-8
+sudo update-locale
+locale -a
+locale
+```
 
 ##### **Cuentas administradoras**
 

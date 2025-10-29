@@ -151,6 +151,7 @@
 <li><a href="#nombre-y-configuraic%C3%B3n-de-red">Nombre y configuraicón de red</a></li>
 <li><a href="#actualizar-el-sistema"><strong>Actualizar el sistema</strong></a></li>
 <li><a href="#configuraci%C3%B3n-fecha-y-hora"><strong>Configuración fecha y hora</strong></a></li>
+<li><a href="#configuraci%C3%B3n-regional"><strong>Configuración regional</strong></a></li>
 <li><a href="#cuentas-administradoras"><strong>Cuentas administradoras</strong></a></li>
 <li><a href="#memoria-y-almacenamiento"><strong>Memoria y almacenamiento</strong></a></li>
 <li><a href="#habilitar-cortafuegos"><strong>Habilitar cortafuegos</strong></a></li>
@@ -215,7 +216,7 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center"><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\portada.jpg" alt="Alt"></td>
+<td style="text-align:center"><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\portada.jpg" alt="Alt"></td>
 </tr>
 <tr>
 <td style="text-align:center">INSTALACIÓN, CONFIGURACIÓN Y DOCUMENTACIÓN DE ENTORNO DE DESARROLLO Y DEL ENTORNO DE EXPLOTACIÓN</td>
@@ -285,11 +286,11 @@ ping www.google.com
 <p>Si obtenemos respuesta de todas correctamente, tendremos la configuración de red finalizada.</p>
 <p>Podria ser que este desactivado en la red el protocolo para hacer ping fuera de esta y por esto no deje hacer ping al dns o a internet.</p>
 <p>Para comprobar la ip usaremos <strong>ip a</strong></p>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipa.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\ipa.png" alt="Alt"></p>
 <p>Para comprobar la gateway usaremos <strong>ip r</strong></p>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\ipr.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\ipr.png" alt="Alt"></p>
 <p>Para comprobar los dns y el dominio usaremos <strong>resolvectl</strong></p>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\resolvectl.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\resolvectl.png" alt="Alt"></p>
 <h5 id="actualizar-el-sistema"><strong>Actualizar el sistema</strong></h5>
 <pre><code class="language-bash">sudo apt update
 sudo apt upgrade
@@ -297,6 +298,14 @@ sudo apt upgrade
 <h5 id="configuración-fecha-y-hora"><strong>Configuración fecha y hora</strong></h5>
 <p>Para ver la informacion de la zona horaria, fecha y hora usaremos <strong>timedatectl</strong>, si no es correcto usaremos <strong>timedatectl set-timezone Europe/Madrid</strong> para establecer la zona horaria en madrid, para ver otras zonas horarias usaremos <strong>timedatectl list-timezones</strong> y sustituiremos Europe/Madrid por la zona horaria deseada.</p>
 <p><a href="https://somebooks.es/establecer-la-fecha-hora-y-zona-horaria-en-la-terminal-de-ubuntu-20-04-lts/" title="Cambiar fecha y hora">Información mas detallada</a></p>
+<h5 id="configuración-regional"><strong>Configuración regional</strong></h5>
+<p>Con <strong>locale</strong> podremos ver la información de idioma y región aplicados, con <strong>locale -a</strong> podremos ver la lista de locales instalados, para instalar uno nuevo <strong>sudo locale-gen es_ES.UTF-8</strong>, los locales se contienen por defecto en <strong>/etc/default/locale</strong></p>
+<pre><code class="language-bash">sudo locale-gen en_GB.UTF-8
+sudo locale-gen pt_PT.UTF-8
+sudo update-locale
+locale -a
+locale
+</code></pre>
 <h5 id="cuentas-administradoras"><strong>Cuentas administradoras</strong></h5>
 <p>De base el sistema tiene la cuenta <strong>root</strong>, y la cuenta <em><strong>miadmin</strong></em> la habremos configurado en la instalación del sistema, esta ya sería administrador.</p>
 <p>Tendremos que crear otra cuenta y hacerla administrador, esta se llamara <strong>miadmin2</strong>.</p>
@@ -451,14 +460,14 @@ SELECT User, Host FROM mysql.user;
 sudo systemctl restart php-fpm.service
 sudo php -m | grep mysql
 </code></pre>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\php-m.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\php-m.png" alt="Alt"></p>
 <h5 id="b-php83-intl"><strong>b) php8.3-intl</strong></h5>
 <p>Instalaremos una extensión de internacionalización básica en la biblioteca ICU(International Components for Unicode). Permite que PHP muestre información adaptada a la región e idioma, sin que tengas que hacerlo manualmente.</p>
 <pre><code class="language-bash">sudo apt install php8.3-intl
 sudo systemctl restart php-fpm.service
 sudo php -m | grep intl
 </code></pre>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\php-mintl.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\php-mintl.png" alt="Alt"></p>
 <h4 id="115-xdebug">1.1.5 XDebug</h4>
 <h4 id="116-dns">1.1.6 DNS</h4>
 <h4 id="117-sftp">1.1.7 SFTP</h4>
@@ -477,7 +486,7 @@ sudo php -m | grep intl
 <p>Hay que seleccionar <strong>Run as: Remote Web Site</strong>, lo siguiente hay que crear una conexion con el servidor web.</p>
 <p>En la pantalla de creación de conexión hay que ponerle un nombre significativo a la coenxión, como el nombre de la maquina a la que se conecta, hay que poner la ip de la maquina y el puerto usado en sftp(22), el usuario web que se vaya a usar para subir los archivos y su contraseña, el resto se deja por defecto.</p>
 <p>Despues hay que probar la conexión para ver que funciona bien. (Si dice que la autenticidad no se puede comprobar no importa).</p>
-<p><img src="file:///d:\_ProyectosNB\JENCDAWProyectoDAW\webroot\img\remoteConexion.png" alt="Alt"></p>
+<p><img src="file:///d:\_Proyectos\JENCDAWProyectoDAW\webroot\img\remoteConexion.png" alt="Alt"></p>
 <p>El directorio de subida tambien se tiene que llamar igual que el proyecto.</p>
 <p>El metodo de subida puede ser al guardar o al lanzar el proyecto, a preferencia del usuario.</p>
 <p>Para borrar un proyecto solamente hay que hacer click derecho en el proyecto y darle a <strong>borrar</strong></p>
