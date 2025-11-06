@@ -1,10 +1,6 @@
-
 # CFGS Desarrollo de Aplicaciones Web
 
-  - [1. Entorno de Desarrollo](entornoDeDesarrollo.md)
-  - [2. Windows 11](windows11.md)
-  - [3. Git y GitHub](git.md)
-  - [4. Entorno de Explotación](entornoDeExplotacion.md)
+# Git y Github
 
 ---
 > **James Edward Nuñez Cuzcano**  
