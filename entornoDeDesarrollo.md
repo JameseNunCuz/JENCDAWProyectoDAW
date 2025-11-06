@@ -18,7 +18,6 @@
   - [2- Instalación del servidor web](#2--instalación-del-servidor-web)
   - [3- PHP FPM](#3--php-fpm)
     - [Instalar php](#instalar-php)
-    - [Configurar php](#configurar-php)
   - [4- MariaDb](#4--mariadb)
     - [Instalación](#instalación)
     - [**------ Modulos php ------**](#-------modulos-php-------)
@@ -261,6 +260,7 @@ Despues iremos al directorio **/etc/apache2/sites-enabled** y aqui cambiaremos e
 Recordar que primero el directorio debe existir, si no existe crearlo con **mkdir**.
 
 ```bash
+sudo mkdir /var/www/html/error
 sudo nano /etc/apache2/sites-enabled/000-default.conf
 
         ErrorLog /var/www/html/error/error.log
@@ -289,49 +289,31 @@ sudo systemctl status apache2
 
 ### Instalar php
 
-Primero tendremos que instalar la libreria para las dependencias y despues las dependencias de php con **ppa:ondrej/php**, despues tendremos que revisar que se han insatalado correctamente.
+Primero Instalaremos php8.3-fpm y php8.3, despues tendremos que abilitar unas librerias que necista php para poder conectarse con apache, luego tendremos que ir al directorio de los ficheros de configuracion de php y hacer una copia de seugridad del fichero de configuración, luego abrimos el fichero de configuración y cambiamos las opciones a nuestras necesidades.
 
 ```bash
-sudo apt install software-properties-common -y
-sudo add-apt-repository ppa:ondrej/php -y
+suddo apt update
+sudo apt install php8.3-fpm php8.3
 
-ls /etc/apt/sources.list.d/ | grep ondrej
-```
-
-Luego tendremos que hacer update y upgrade e instalar php-fpm
-
-```bash
-sudo apt update
-sudo apt upgrade
-sudo apt install php8.3-fpm -y
-```
-
-Despues tendremos que desabilitar y habilitar una serie de modulos para que apache se pueda comunicar con php-fpm.
-
-```bash
-sudo a2enmod proxy_fcgi mpm_event
-sudo a2dismod mpm_prefork
+sudo a2enmod proxy_fcgi setenvif
 sudo a2enconf php8.3-fpm
-```
 
-Finalmente reiniciaremos apache y revisaremos sin ambos servicios funcionan correctamente.
+cd /etc/php/8.3/fpm
+sudo cp php.ini php.ini.bk
+sudo nano php.ini
+```
+| General | Desarrollo | Producción |
+| ---- | :----- | :---- |
+| común | file-uploads = On <br> allow-url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid  | file-uploads = On <br> allow-url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid|
+|Errores | display_errors  = On <br> error_reporting = E_ALL<br> display_startup_errors = On <br>|   display_errors  = Off <br>error_reporting = E_ALL & ~E_NOTICE <br>display_startup_errors = Off <br>log_errors = On
+
+Por ultimo reiniciaremos apache y php y comprobaremos que funciona
 
 ```bash
 sudo systemctl restart apache2
-sudo systemctl status apache2
+sudo systemctl restart php8.3-fpm
 sudo systemctl status php8.3-fpm
-```
-
-
-### Configurar php
-
-```bash
-/etc/php/8.3/fpm
-Hacer copia de seguridad de php.ini
-Cambiar:
-  display_errors = On
-  display_startup_errors = On
-  memory_limit = 250M
+sudo systemctl status apache2
 ```
 
 Si en algun momento se quiere modificar la version que php usa se podra cambiar con este comando, esto es especialmente util si se nota que php no esta funcionando como unos espera.
@@ -373,6 +355,7 @@ Ahora entraremos a la consola de mariadb y tendremos que crear un usuario admini
 sudo mariadb
 GRANT ALL ON *.* TO 'adminsql'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
 SELECT User, Host FROM mysql.user;
+exit
 ```
 
 Despues tendremos que ejecutar el script de seguridad de sql para aseguraranos de que esta seguro.
@@ -383,9 +366,11 @@ sudo mysql_secure_installation
 
 -En el primer paso preguntará por la contraseña de root para MariaDB, pulsa la tecla Enter ya que no hay contraseña definida.
 
+-en la siguiente pregunta nos preguntara si queremos cambiar al socket unix, le diremos que si.
+
 -La siguiente, preguntará si quieres asignar una contraseña para el usuario “root", indicar que si y poner paso de contraseña.
 
--En el tercer paso preguntará si quieres eliminar usuario anónimo, aquí indica que Sí quieres borrar los datos.
+-En el cuarta paso preguntará si quieres eliminar usuario anónimo, aquí indica que Sí quieres borrar los datos.
 
 -Después preguntará si quieres desactivar el acceso remoto del usuario “root”, aquí indica que Sí quieres desactivar acceso remoto para usuario por seguridad.
 
@@ -401,7 +386,7 @@ Instalaremos la extensión que permite a PHP conectarse y comunicarse con servid
 
 ```bash
 sudo apt install php8.3-mysql
-sudo systemctl restart php-fpm.service
+sudo systemctl restart php8.3-fpm
 sudo php -m | grep mysql
 ```
 
@@ -413,13 +398,51 @@ Instalaremos una extensión de internacionalización básica en la biblioteca IC
 
 ```bash
 sudo apt install php8.3-intl
-sudo systemctl restart php-fpm.service
+sudo systemctl restart php8.3-fpm
 sudo php -m | grep intl
 ```
 
 ![Alt](webroot/img/php-mintl.png)
 
 ## 5- XDebug
+
+Primero comprobaremos si tenemos instalada la extensión xdebug, si no la instalaremos
+
+```bash
+sudo php -v | grep xdebug
+sudo apt install php8.3-xdebug
+```
+
+Despues entraremos en el fichero de configuracion de xdebug y pergaremos las siguientes lineas en el.
+
+```bash
+sudo nano /etc/php/8.3/fpm/conf.d/20-xdebug.ini
+
+xdebug.mode=develop,debug
+xdebug.start_with_request=yes
+xdebug.client_host=127.0.0.1
+xdebug.client_port=9003
+xdebug.log=/tmp/xdebug.log
+xdebug.log_level=7
+xdebug.idekey="netbeans-xdebug"
+xdebug.discover_client_host=1
+```
+
+Luego tendremos que cambiar los permisos del fichero de los logs
+
+```bash
+sudo touch /tmp/xdebug.log
+sudo chmod 666 /tmp/xdebug.log
+sudo chown root:root /tmp/xdebug.log
+```
+
+Por ultimo reiniciaremos los servicios de php y apache, si xdebug se ha instalado correctamente esto se vera reflejado en el phpinfo().
+
+```bash
+sudo systemctl restart apache2
+sudo systemctl restart php8.3-fpm
+```
+
 ## 6- DNS
 ## 7- SFTP
 ## 8- Apache Tomcat
