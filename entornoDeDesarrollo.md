@@ -409,7 +409,7 @@ sudo php -m | grep intl
 Primero comprobaremos si tenemos instalada la extensión xdebug, si no la instalaremos
 
 ```bash
-sudo php -v | grep xdebug
+sudo php -v
 sudo apt install php8.3-xdebug
 ```
 
