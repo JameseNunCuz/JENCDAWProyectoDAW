@@ -6,8 +6,9 @@
 - [CFGS Desarrollo de Aplicaciones Web](#cfgs-desarrollo-de-aplicaciones-web)
 - [Entorno de Desarrollo](#entorno-de-desarrollo)
 - [Ubuntu Server 24.04.3 LTS](#ubuntu-server-24043-lts)
-  - [1- **Configuración inicial**](#1--configuración-inicial)
-    - [Nombre y configuraicón de red](#nombre-y-configuraicón-de-red)
+  - [1- Configuración inicial](#1--configuración-inicial)
+    - [**Configuracion del nombre**](#configuracion-del-nombre)
+    - [**Configuracion de red**](#configuracion-de-red)
     - [**Actualizar el sistema**](#actualizar-el-sistema)
     - [**Configuración fecha y hora**](#configuración-fecha-y-hora)
     - [**Configuración regional**](#configuración-regional)
@@ -15,19 +16,32 @@
     - [**Memoria y almacenamiento**](#memoria-y-almacenamiento)
     - [**Habilitar cortafuegos**](#habilitar-cortafuegos)
     - [**Instalar antivirus**](#instalar-antivirus)
-  - [2- Instalación del servidor web](#2--instalación-del-servidor-web)
-  - [3- PHP FPM](#3--php-fpm)
-    - [Instalar php](#instalar-php)
-  - [4- MariaDb](#4--mariadb)
+  - [2- Instalación del servidor web apache2](#2--instalación-del-servidor-web-apache2)
+    - [Instalacion](#instalacion)
+    - [Cuentas web](#cuentas-web)
+    - [Configuración](#configuración)
+  - [3- HTTPS](#3--https)
+    - [Instalacion de ssl y certificados](#instalacion-de-ssl-y-certificados)
+    - [Configuracion y activacion](#configuracion-y-activacion)
+    - [Redireccionamiento](#redireccionamiento)
+  - [4- PHP FPM](#4--php-fpm)
+    - [Instalacion](#instalacion-1)
+    - [Configuracion](#configuracion)
+  - [5- MariaDb](#5--mariadb)
     - [Instalación](#instalación)
-    - [**------ Modulos php ------**](#-------modulos-php-------)
+    - [Usuario admin e instalacion segura](#usuario-admin-e-instalacion-segura)
+    - [**Modulos php**](#modulos-php)
       - [**a) php8.3-mysql**](#a-php83-mysql)
       - [**b) php8.3-intl**](#b-php83-intl)
-  - [5- XDebug](#5--xdebug)
-  - [6- DNS](#6--dns)
-  - [7- SFTP](#7--sftp)
-  - [8- Apache Tomcat](#8--apache-tomcat)
-  - [9- LDAP](#9--ldap)
+    - [PhpMyadmin](#phpmyadmin)
+  - [6- XDebug](#6--xdebug)
+  - [7- DNS](#7--dns)
+  - [8- SFTP](#8--sftp)
+    - [Enjaulado de usuarios](#enjaulado-de-usuarios)
+      - [**Usuarios y directorios**](#usuarios-y-directorios)
+      - [**Configuracion ssh**](#configuracion-ssh)
+  - [9- Apache Tomcat](#9--apache-tomcat)
+  - [10- LDAP](#10--ldap)
 
 
 |                           DAW/DWES Tema2                            |
@@ -39,9 +53,7 @@
 
 Este documento es una guía detallada del proceso de instalación y configuración de un servidor de aplicaciones en Ubuntu Server utilizando Apache, con soporte PHP y MySQL
 
-## 1- **Configuración inicial**
-
-### Nombre y configuraicón de red
+## 1- Configuración inicial
 
 > **Nombre de la máquina**: jenc-used\
 > **Memoria RAM**: 2G\
@@ -50,6 +62,10 @@ Este documento es una guía detallada del proceso de instalación y configuraci�
 > **Dirección IP** :10.199.9.174/22\
 > **GW**: 10.199.8.1/22\
 > **DNS**: 10.151.123.21 y 10.151.126.21
+
+Para ver la version instalada del sistema operativo **lsb_release -a**
+
+### **Configuracion del nombre**
 
 Para cambiar el nombre de la maquina iremos al fichero **/etc/hostname** y aqui cambiaremos su contenido por el nombre de usuario deseado, despues iremos al fichero **/etc/hosts** y cambiaremos el nombre que pone en la segunda linea por el mismo que pusimos en el anterior fichero.
 
@@ -68,6 +84,8 @@ ff02::2 ip6-allrouters
 Despues usamos **hostnamectl set-hostname nombre** y ya estaría cambiado el nombre de la maquina.
 
 Para ver el nombre de la maquina usaremos **hostname** o **hostnamectl** que contiene mas información.
+
+### **Configuracion de red**
 
 Para configurar la red, primero copiaremos el archivo de red **/etc/netplan/50-cloud-init.yaml** y lo llamaremos **enp0s3.yaml** en la misma carpeta.
 
@@ -182,11 +200,14 @@ Despues le pondremos contraseña.
 sudo passwd miadmin2
 ```
 
-> - [X] root(inicio)
-> - [X] miadmin/paso
-> - [X] miadmin2/paso
+Por ultimo comprobaremos que se han creado correctamente y estan en los grupos correspondientes
 
- ### **Memoria y almacenamiento**
+```bash
+sudo cat /etc/passwd |grep miadmin
+sudo groups miadmin
+```
+
+### **Memoria y almacenamiento**
 
 Para ver la memoria del sistema usaremos **free -h**.
 
@@ -224,7 +245,9 @@ sudo systemctl start clamav-freshclam
 
 Para ver la version instalada **clamscan -V**
 
-## 2- Instalación del servidor web
+## 2- Instalación del servidor web apache2
+
+### Instalacion
 
 Primero tendremos que actualizar el sistema, despues instalaremos apache2, luego comprobaremos que apache2 esta activo, si este esta activo tendremos que abrir el puerto 80 en el cortafuegos, luego quitaremos la regla de v6 ya que representa una vulnerabilidad, despues usaremos **ufw status** para ver que el puerto 80 esta abierto en este.
 
@@ -240,6 +263,8 @@ sudo ufw delete 3 (o el numero de regla que sea)
 sudo ufw status
 ```
 
+### Cuentas web
+
 Lo siguiente es crear las cuentas de los usuarios web, se pueden crar de 2 formas, con **addduser** puedes ponerle la contraseña en la creación de la cuenta y con **useradd** tienes que usar **passwd** para ponerle la contraseña.
 
 ```bash
@@ -253,7 +278,10 @@ Importante no olvidar cambiar el dueño de la carpeta **/var/www/html** al grupo
 
 ```bash
 sudo chown -R www-data:www-data /var/www/html
+sudo chmod g+rwx /var/www/html
 ```
+
+### Configuración
 
 Despues iremos al directorio **/etc/apache2/sites-enabled** y aqui cambiaremos el deirectorio de errores al deseado.
 
@@ -285,26 +313,125 @@ sudo systemctl restart apache2
 sudo systemctl status apache2
 ```
 
-## 3- PHP FPM
+Para ver los modulos activos de apache2 **ls /etc/apache2/mods-enabled**
 
-### Instalar php
+## 3- HTTPS
 
-Primero Instalaremos php8.3-fpm y php8.3, despues tendremos que abilitar unas librerias que necista php para poder conectarse con apache, luego tendremos que ir al directorio de los ficheros de configuracion de php y hacer una copia de seugridad del fichero de configuración, luego abrimos el fichero de configuración y cambiamos las opciones a nuestras necesidades.
+### Instalacion de ssl y certificados
+
+Para hacer https nuestro servidor lo primero tendremos que abilitar el modulo de ssl de apache2, despues generaremos el certificado de nuestro sitio, nos saldra un dialogo para introducir la informacion que queramos sobre nuestro servidor y lo pocremos rellenar por ejemplo como aqui.
 
 ```bash
-suddo apt update
+sudo a2enmod ssl
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+  Country Name (2 letter code) [AU]:ES
+  State or Province Name (full name) [Some-State]:Zamora
+  Locality Name (eg, city) []:Benavente
+  Organization Name (eg, company) [Internet Widgits Pty Ltd]:IES LOS SAUCES
+  Organizational Unit Name (eg, section) []:Informatica
+  Common Name (e.g. server FQDN or YOUR name) []:JameseNunCuz
+  Email Address []:jamese.nuncuz.1@educa.jcyl.es
+```
+
+### Configuracion y activacion
+
+Despues iremos al directorio de sitios de apache y aqui haremos una copia del archivo por defecto que llamaremos como nuestro servidor y lo configuraremos de la siguiente forma, siendo ServerName el nombre del dominio de nuestro servidor o su ip
+  
+```bash 
+cd /etc/apache2/sites-available/
+sudo cp default-ssl.conf jenc-used.conf
+sudo nano jenc-used.conf
+
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        ServerName 192.168.1.200
+        DocumentRoot /var/www/html
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/ssl-error.log
+        CustomLog ${APACHE_LOG_DIR}/ssl-access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+
+        #   SSL Engine Switch:
+        #   Enable/Disable SSL for this virtual host.
+        SSLEngine on
+
+        #   A self-signed (snakeoil) certificate can be created by installing
+        #   the ssl-cert package. See
+        #   /usr/share/doc/apache2/README.Debian.gz for more info.
+        #   If both key and certificate are stored in the same file, only the
+        #   SSLCertificateFile directive is needed.
+        SSLCertificateFile      /etc/ssl/certs/apache-selfsigned.crt
+        SSLCertificateKeyFile   /etc/ssl/private/apache-selfsigned.key
+```
+
+Luego activaremos esta configuracion que acabamos de crear y recargaremos el servicio de apache2
+
+```bash
+sudo a2ensite jenc-used.conf
+sudo systemctl reload apache2
+```
+
+Por ultimo tendremos que abrir el puerto que usa https y desactivar la regla v6, con esto ya estaria funcionando sobre ssl nuestro servidor
+
+```bash
+sudo ufw allow 443
+sudo ufw status numbered
+sudo ufw delete 5
+sudo ufw status
+```
+
+### Redireccionamiento
+
+Para redireccionar automaticamente todo el trafico de http a https primero tendremos que habilitar el modulo de rewrite y reiniciar apache, luego crearemos el .htaccess en el que pondremos las siguientes lineas para añadir las reglas que hagan el redireccionamiento
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+sudo /var/www/html/.htaccess
+  RewriteEngine On
+  RewriteCond %{SERVER_PORT} 80
+  RewriteRule ^(.*)$ https://192.168.1.200/$1 [R,L]
+```
+
+## 4- PHP FPM
+
+### Instalacion
+
+Primero Instalaremos php8.3-fpm y php8.3, despues tendremos que abilitar unas librerias que necista php para poder conectarse con apache.
+
+```bash
+sudo apt update
 sudo apt install php8.3-fpm php8.3
 
 sudo a2enmod proxy_fcgi setenvif
 sudo a2enconf php8.3-fpm
+```
 
+### Configuracion
+
+Tendremos que ir al directorio de los ficheros de configuracion de php y hacer una copia de seugridad del fichero de configuración, luego abrimos el fichero de configuración y cambiamos las opciones a nuestras necesidades
+
+```bash
 cd /etc/php/8.3/fpm
 sudo cp php.ini php.ini.bk
 sudo nano php.ini
 ```
 | General | Desarrollo | Producción |
 | ---- | :----- | :---- |
-| común | file-uploads = On <br> allow-url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid  | file-uploads = On <br> allow-url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid|
+| común | file_uploads = On <br> allow_url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid  | file_uploads = On <br> allow_url_fopen = On <br>memory_limit =  256M <br>upload_max_filesize = 100M <br>max_execution_time = 360 <br> date.timezone = Europe/Madrid|
 |Errores | display_errors  = On <br> error_reporting = E_ALL<br> display_startup_errors = On <br>|   display_errors  = Off <br>error_reporting = E_ALL & ~E_NOTICE <br>display_startup_errors = Off <br>log_errors = On
 
 Por ultimo reiniciaremos apache y php y comprobaremos que funciona
@@ -322,7 +449,7 @@ Si en algun momento se quiere modificar la version que php usa se podra cambiar 
 sudo update-alternatives --config php
 ```
 
-## 4- MariaDb
+## 5- MariaDb
 
 ### Instalación
 
@@ -345,11 +472,13 @@ Lo siguiente tendremos que abrir el puerto 3306 en el firewall y deshabilitar la
 ```bash
 sudo ufw allow 3306
 sudo ufw status numbered
-sudo ufw delete 5 (Nºde la regla v6 del puerto)
+sudo ufw delete 4 (Nºde la regla v6 del puerto)
 sudo ufw status
 ```
 
-Ahora entraremos a la consola de mariadb y tendremos que crear un usuario administrador, luego comprobaremos que existe y tiene accesoa a todo.
+### Usuario admin e instalacion segura
+
+Entraremos a la consola de mariadb y tendremos que crear un usuario administrador, luego comprobaremos que existe y tiene accesoa a todo.
 
 ```bash
 sudo mariadb
@@ -378,7 +507,7 @@ sudo mysql_secure_installation
 
 -Por último, preguntará si quieres recargar privilegios, aquí indica que Sí.
 
-### **------ Modulos php ------**
+### **Modulos php**
 
 #### **a) php8.3-mysql**
 
@@ -404,7 +533,32 @@ sudo php -m | grep intl
 
 ![Alt](webroot/img/php-mintl.png)
 
-## 5- XDebug
+### PhpMyadmin
+
+Para instalar phpmyadmin primero haremos update y luego lo instalaremos
+
+```bash
+sudo apt update
+sudo apt install phpmyadmin
+```
+
+Durante la instalacion nos pedira el tipo de servidor y elegiremos apache, luego tendremos que establecer una contraseña para phpmyadmin y confirmarla
+
+![Alt](webroot/img/phpmyadmin1.png)
+![Alt](webroot/img/phpmyadmin2.png)
+![Alt](webroot/img/phpmyadmin3.png)
+
+Una vez acabe tendremos que crear un enlace simbolico del finchero de configuracion de phpmyadmin al fichero de configuracion de apache, luego activaremos la configuracion de phpmyadmin y reiniciaremos apache, con esto ya php ya funcionaria, pudiendo acceder desde ip/phpmyadmin.
+
+```bash
+sudo ln -sf /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
+sudo a2enconf phpmyadmin
+sudo systemctl restart apache2
+```
+
+Importante recordar que para acceder a phpmyadmin tendremos que acceder con un usuario de sql de mariadb.
+
+## 6- XDebug
 
 Primero comprobaremos si tenemos instalada la extensión xdebug, si no la instalaremos
 
@@ -443,10 +597,60 @@ sudo systemctl restart apache2
 sudo systemctl restart php8.3-fpm
 ```
 
-## 6- DNS
-## 7- SFTP
-## 8- Apache Tomcat
-## 9- LDAP
+## 7- DNS
+## 8- SFTP
+
+### Enjaulado de usuarios
+
+#### **Usuarios y directorios**
+
+Para enjaular un usuario lo primero tendremos que crear el grupo en el que estaran los usarios enjaulados, para el ejemplo usaremos el usuario enjaulado1
+
+```bash
+sudo addgroup sftp
+
+sudo useradd -g www-data -G sftp -m -d /var/www/enjaulado1 enjaulado1
+sudo passwd enjaulado1
+```
+
+Despues de tener el grupo y usuario que queramos enjaular cambiaremos el dueño de su home a root y le quitaremos los permisos sobre este
+
+```bash
+sudo chown root:root /var/www/enjaulado1
+sudo chmod 555 /var/www/enjaulado1
+```
+
+Luego crearemos el directorio httpdocs dentro del home de este usuario, que sera con el que interactue este, le daremos permisos y lo haremos dueño de este.
+
+```bash
+sudo mkdir /var/www/enjaulado1/httpdocs
+sudo chmod 2775 -R /var/www/enjaulado1/httpdocs
+sudo chown enjaulado1:www-data -R /var/www/enjaulado1/httpdocs
+```
+
+#### **Configuracion ssh**
+
+Por ultimo cambiaremos la configuracion de ssh, editaremos el fichero de configuracion de la siguiente forma y despues reiniciamos el servicio de ssh y este usuario ya estaria enjaulado
+
+```bash
+sudo nano /etc/ssh/sshd_config
+  #Subsystem      sftp    /usr/lib/openssh/sftp-server
+
+  Subsystem sftp internal-sftp
+  Match Group sftp
+  ChrootDirectory %h
+  ForceCommand internal-sftp -u 2
+  AllowTcpForwarding yes
+  PermitTunnel no
+  X11Forwarding no
+```
+
+```bash
+sudo systemctl restart ssh
+```
+
+## 9- Apache Tomcat
+## 10- LDAP
 
 ---
 
