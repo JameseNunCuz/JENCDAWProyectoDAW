@@ -6,29 +6,20 @@
 }
 
 body {
-    background-color: DAF7DC;
-}
-
-.center-container {
-    position: fixed;
-    transform: translate(-50%, -50%);
-    top: 50vh;
-    left: 50vw;
-    max-height: 72vh;
-    overflow: auto;
+    background-color: #DAF7DC;
     display: flex;
-    justify-content: center;
     flex-direction: column;
+    height: 100vh;
 }
 
-.header {
+header {
     width: 100%;
     align-items: center;
     text-align: center;
-    position: fixed;
+    position: relative;
     transform: translate(-50%, 0);
     left: 50vw;
-    height: 13vh;
+    height: 10vh;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -38,40 +29,41 @@ body {
     padding: 2em;
 }
 
-.home {
-    position: fixed;
-    transform: translate(-50%, 0);
-    left: 90vw;
+main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: flex-start;
+    ;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em 1em 1em 1em;
 }
 
-.footer {
+footer {
     width: 100%;
     align-items: center;
     text-align: center;
-    position: fixed;
-    height: 13vh;
+    position: relative;
+    height: 15vh;
     transform: translate(-50%, 0);
     left: 50vw;
-    top: 87.5vh;
-
     background-color: #2F4858;
     color: white;
     padding: 2em;
 }
 
 button {
-    border-radius: 1em;
     background-color: #2F4858;
     color: white;
-    padding: 0.3em;
-    border: none;
+    padding: 0.2em;
     cursor: pointer;
     text-align: center;
-    max-height: 10em;
-    margin: 1em;
-    height: match-parent;
-    width: match-parent;
+    height: fit-content;
+    width: fit-content;
     font-size: 2em;
+    border: aliceblue 1px solid;
+    border-radius: 0.6em;
 }
 
 .active:hover {
@@ -88,7 +80,22 @@ td {
     text-align: center;
     vertical-align: middle;
 }
+
+.home {
+    position: fixed;
+    transform: translate(-50%, 0);
+    left: 90vw;
+}
+
 img {
-    max-height: 8vh;
-    min-width: 8vh;
+    max-height: 4.5vh;
+    min-width: 4.5vh;
+}
+
+table{
+    margin:10%;
+}
+
+td{
+    padding:1em;
 }
