@@ -20,6 +20,7 @@
     - [Instalacion](#instalacion)
     - [Cuentas web](#cuentas-web)
     - [Configuración](#configuración)
+    - [Creacion de sitios web virtuales](#creacion-de-sitios-web-virtuales)
   - [3- HTTPS](#3--https)
     - [Instalacion de ssl y certificados](#instalacion-de-ssl-y-certificados)
     - [Configuracion y activacion](#configuracion-y-activacion)
@@ -27,6 +28,7 @@
   - [4- PHP FPM](#4--php-fpm)
     - [Instalacion](#instalacion-1)
     - [Configuracion](#configuracion)
+    - [Modulos de php](#modulos-de-php)
   - [5- MariaDb](#5--mariadb)
     - [Instalación](#instalación)
     - [Usuario admin e instalacion segura](#usuario-admin-e-instalacion-segura)
@@ -315,6 +317,59 @@ sudo systemctl status apache2
 
 Para ver los modulos activos de apache2 **ls /etc/apache2/mods-enabled**
 
+### Creacion de sitios web virtuales
+
+Para crear un sitio virtual lo primero tendremos que copiar el archivo de configuración por defecto de apache con el nombre del sitio web que queremos crear.
+
+```bash
+cd /etc/apache2/sites-available
+sudo cp 000-default.conf sitio1-jamesenuncuz-ieslossauces-es.conf
+```
+
+Despues tendremos que editar este y ponerle el server name con ls direccion que tendra si queremos que este este basado en el dominio o en la ip.
+
+Si queremos hacer que este basado en puero tendremos que cambiar el puerto.
+
+```bash
+<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerName sitio1.jamesenuncuz.ieslossauces.es
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/enjaulado1/httpdocs
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog /var/www/enjaulado1/error/error.log
+        CustomLog ${APACHE_LOG_DIR}/access-sitio1.log combined
+```
+
+Luego tedremos que crear el directorio de errores de nuestro sitio y le cambiaremos los permisos para que el usuario sea el dueño del directorio.
+
+```bash
+sudo mkdir /var/www/enjaulado1/error
+sudo chown enjaulado1:www-data  /var/www/enjaulado1/error
+sudo sudo chmod 2775 /var/www/enjaulado1/error
+```
+
+Por ultimo tendremos que aplicar la configuración que acabamos de crear y recargar el servicio de apache2.
+
+```bash
+sudo a2ensite sitio1-jamesenuncuz-ieslossauces-es.conf
+sudo systemctl reload apache2
+```
+
 ## 3- HTTPS
 
 ### Instalacion de ssl y certificados
@@ -408,6 +463,14 @@ sudo /var/www/html/.htaccess
 
 ## 4- PHP FPM
 
+proxy_fcgi setenvif
+
+php8.3-mysql
+
+php8.3-intl
+
+php8.3-xdebug
+
 ### Instalacion
 
 Primero Instalaremos php8.3-fpm y php8.3, despues tendremos que abilitar unas librerias que necista php para poder conectarse con apache.
@@ -448,6 +511,10 @@ Si en algun momento se quiere modificar la version que php usa se podra cambiar 
 ```bash
 sudo update-alternatives --config php
 ```
+
+### Modulos de php
+
+
 
 ## 5- MariaDb
 
